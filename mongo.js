@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-var config = require('./config.json');
+var config = require("./config.json");
 console.log(config);
 
 const url = `mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster0.3apkp29.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`;
@@ -16,27 +16,21 @@ const noteSchema = new mongoose.Schema({
 
 const Note = mongoose.model("Note", noteSchema);
 
-
 const note = new Note({
   content: "HTML is easy",
   important: true,
 });
 
-
-/*
 note.save().then((result) => {
   console.log("note saved!");
-  mongoose.connection.close();
 });
 
-*/
-
-Note.find({}).then(result => {
-  result.forEach(note => {
-    console.log(note)
-  })
-  mongoose.connection.close()
-})
+Note.find({}).then((result) => {
+  result.forEach((note) => {
+    console.log(note);
+  });
+  mongoose.connection.close();
+});
 
 /* Only important notes
 
