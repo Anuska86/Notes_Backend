@@ -8,8 +8,6 @@ if (process.argv.length < 3) {
   process.exit(1);
 }
 
-const password = process.argv[2];
-
 const url = `mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster0.3apkp29.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 mongoose.set("strictQuery", false);
