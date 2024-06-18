@@ -1,4 +1,5 @@
 # Backend
+INSTALL: 
 
 Express: npm install express
 
@@ -8,11 +9,19 @@ CORS (Cross-Origin Resource Sharing): npm install cors
 
 Mongoose: npm install mongoose
 
+Dotev: npm install dotenv
+
+LAUNCH: 
+
 start: node index.js   or      npm start
+
+Mongo: node mongo.js 
 
 dev start: npm run dev
 
-Mongo: node mongo.js 
+
+
+
 
 Link: https://notesbackend-nzho.onrender.com
 

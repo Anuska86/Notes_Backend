@@ -1,7 +1,25 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-const cors = require('cors')
-const http = require("http");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const Note = require("./models/note");
+
+mongoose.set("strictQuery", false);
+mongoose.connect(url);
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+});
+
+noteSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
 
 let notes = [
   {
@@ -22,51 +40,47 @@ let notes = [
 ];
 
 app.use(express.json());
-app.use(cors())
-app.use(express.static('dist'))
+app.use(cors());
+app.use(express.static("dist"));
 
 app.get("/api/notes", (request, response) => {
-  response.json(notes)
+  Note.find({}).then((notes) => {
+    response.json(notes);
+  });
 });
-
 app.get("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
-  const note = notes.find((note) => note.id === id);
+  const note = notes.findById(id);
 
   if (note) {
     response.json(note);
   } else {
-    response.statusMessage="That note doesn't exist";
+    response.statusMessage = "That note doesn't exist";
     response.status(404).end();
   }
 });
 
 const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => n.id))
-    : 0
-  return maxId + 1
-}
+  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
+  return maxId + 1;
+};
 
-app.post('/api/notes', (request, response) => {
-  const body = request.body
+app.post("/api/notes", (request, response) => {
+  const body = request.body;
 
-  if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    })
+  if (body.content === undefined) {
+    return response.status(400).json({ error: "content missing" });
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
-    important: Boolean(body.important) || false,
-    id: generateId(),
-  }
+    important: body.important || false,
+  });
 
-  notes = notes.concat(note)
-
-  response.json(note)
-})
+  note.save().then((savedNote) => {
+    response.json(savedNote);
+  });
+});
 
 app.delete("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -75,7 +89,7 @@ app.delete("/api/notes/:id", (request, response) => {
   response.status(204).end();
 });
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:${PORT}`);
 });

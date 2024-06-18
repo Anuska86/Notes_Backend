@@ -7,29 +7,30 @@ const url = `mongodb+srv://${config.MONGO_USER}:${config.MONGO_PASSWORD}@cluster
 
 mongoose.set("strictQuery", false);
 
-mongoose.connect(url);
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-});
-
-const Note = mongoose.model("Note", noteSchema);
-
-const note = new Note({
-  content: "HTML is easy",
-  important: true,
-});
-
-note.save().then((result) => {
-  console.log("note saved!");
-});
-
-Note.find({}).then((result) => {
-  result.forEach((note) => {
-    console.log(note);
+mongoose.set("strictQuery", false);
+mongoose.connect(url).then(() => {
+  const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean,
   });
-  mongoose.connection.close();
+
+  const Note = mongoose.model("Note", noteSchema);
+
+  const note = new Note({
+    content: "HTML is x",
+    important: true,
+  });
+
+  note.save().then((result) => {
+    console.log("note saved!");
+  });
+
+  Note.find({}).then((result) => {
+    result.forEach((note) => {
+      console.log(note);
+    });
+    mongoose.connection.close();
+  });
 });
 
 /* Only important notes
